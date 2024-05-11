@@ -43,7 +43,7 @@ fun HomeWelcomeScreen(){
                 .padding(innerPadding),
             verticalArrangement = Arrangement.Bottom,
         ){
-            CardWelcome(name = "name", Modifier.padding(bottom = 24.dp))
+            WelcomeCard(name = "name", Modifier.padding(bottom = 24.dp))
             HomeMainCard(R.drawable.stack_of_books,"Explore", Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
             HomeMainCard(R.drawable.favorite,"Favorites", Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 34.dp))
         }
@@ -51,7 +51,7 @@ fun HomeWelcomeScreen(){
 }
 
 @Composable
-private fun CardWelcome(name: String, modifier: Modifier = Modifier){
+private fun WelcomeCard(name: String, modifier: Modifier = Modifier){
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -141,6 +141,6 @@ fun HomeMainCardPreview() {
 @Composable
 fun CardWelcomePreview() {
     BookReviewsTheme {
-        CardWelcome("name")
+        WelcomeCard("name")
     }
 }
