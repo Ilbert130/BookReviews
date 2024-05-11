@@ -9,15 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +28,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.bookreviews.R
 import com.app.bookreviews.ui.theme.BookReviewsTheme
+
+
+@Composable
+fun HomeWelcomeScreen(){
+    Scaffold(
+        topBar = {},
+        bottomBar = { BookBottomNavigation(modifier = Modifier.padding(top = 30.dp)) },
+
+        ){ innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Bottom,
+        ){
+            CardWelcome(name = "name", Modifier.padding(bottom = 24.dp))
+            HomeMainCard(R.drawable.stack_of_books,"Explore", Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
+            HomeMainCard(R.drawable.favorite,"Favorites", Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 34.dp))
+        }
+    }
+}
 
 @Composable
 private fun CardWelcome(name: String, modifier: Modifier = Modifier){
@@ -103,6 +118,14 @@ private fun HomeMainCard(@DrawableRes drawable: Int, description: String, modifi
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeWelcomeScreenPreview() {
+    BookReviewsTheme {
+        HomeWelcomeScreen()
     }
 }
 
