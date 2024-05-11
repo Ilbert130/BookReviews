@@ -34,7 +34,7 @@ import com.app.bookreviews.ui.theme.BookReviewsTheme
 fun HomeWelcomeScreen(){
     Scaffold(
         topBar = {},
-        bottomBar = { BookBottomNavigation(modifier = Modifier.padding(top = 30.dp)) },
+        bottomBar = { BookBottomNavigation(modifier = Modifier.padding(top = 15.dp, bottom = 15.dp)) },
 
         ){ innerPadding ->
         Column(
