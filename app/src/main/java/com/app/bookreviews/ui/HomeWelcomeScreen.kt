@@ -59,6 +59,61 @@ private fun CardWelcome(name: String, modifier: Modifier = Modifier){
     }
 }
 
+@Composable
+private fun HomeMainCard(@DrawableRes drawable: Int, description: String, modifier: Modifier = Modifier){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ),
+        modifier = modifier.shadow(
+            elevation = 15.dp,
+            shape = MaterialTheme.shapes.medium,
+            clip = true,
+            ambientColor = Color.Black,
+            spotColor = Color.Black
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 32.dp, top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                painter = painterResource(id = drawable),
+                contentDescription = null,
+                modifier = Modifier.size(60.dp)
+            )
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ){
+                Text(
+                    text = stringResource(R.string.books),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.align(Alignment.Start),
+                    color = Color.Gray
+                )
+                Text(
+                    text = description,
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start),
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeMainCardPreview() {
+    BookReviewsTheme {
+        HomeMainCard(R.drawable.book,"Explore", Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CardWelcomePreview() {
