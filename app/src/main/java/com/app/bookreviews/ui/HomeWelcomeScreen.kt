@@ -105,7 +105,7 @@ private fun HomeMainCard(@DrawableRes drawable: Int, description: String, modifi
             ){
                 Text(
                     text = stringResource(R.string.books),
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.align(Alignment.Start),
                     color = Color.Gray
