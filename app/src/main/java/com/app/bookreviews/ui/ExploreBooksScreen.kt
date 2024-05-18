@@ -3,7 +3,6 @@ package com.app.bookreviews.ui
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,11 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,12 +50,13 @@ fun ExploreBooksScreen() {
             verticalArrangement = Arrangement.Bottom,
         ){
             Text(
-                modifier = Modifier.padding(start = 35.dp, end = 45.dp, top = 36.dp, bottom = 22.dp),
+                modifier = Modifier.padding(start = 35.dp, end = 40.dp, top = 36.dp, bottom = 22.dp),
                 textAlign = TextAlign.Start,
                 lineHeight = 40.sp,
                 text = "Explore thousands of\n" + "books on the go",
                 fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1C1939)
             )
             SearchBar(Modifier.padding(start = 30.dp, end = 30.dp, top = 22.dp, bottom = 16.dp))
             Text(
@@ -68,7 +65,8 @@ fun ExploreBooksScreen() {
                 lineHeight = 40.sp,
                 text = "List of books",
                 fontSize = 26.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1C1939)
             )
             LazyColumn(
 
@@ -173,27 +171,13 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(bottom = 6.dp),
-            color = Color.Black
+            color = Color(0xFF373737)
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Rate(
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(bottom = 6.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_star),
-                contentDescription = null,
-                modifier = Modifier.padding(end = 6.dp)
-            )
-            Text(
-                text = "4.5",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier,
-                color = Color.Gray
-            )
-        }
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -219,6 +203,34 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun Rate(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_star),
+            contentDescription = null,
+            modifier = Modifier.padding(end = 6.dp)
+        )
+        Text(
+            text = "4.5",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier,
+            color = Color.Gray
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RatePreview() {
+    BookReviewsTheme {
+        Rate()
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
