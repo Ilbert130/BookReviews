@@ -1,8 +1,8 @@
-package com.app.bookreviews.ui
+package com.app.bookreviews.features.ExploreBook
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,17 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,16 +34,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.app.bookreviews.DTOs.BookDTO
 import com.app.bookreviews.R
+import com.app.bookreviews.ui.BookBottomNavigation
 import com.app.bookreviews.ui.theme.BookReviewsTheme
 
 
 @Composable
-fun ExploreBooksScreen() {
+fun ExploreBooksScreen(exploreBooksViewModel: ExploreBooksViewModel = viewModel()) {
+    val exploreBooksState by exploreBooksViewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {},
         bottomBar = { BookBottomNavigation(modifier = Modifier.padding(top = 15.dp, bottom = 15.dp)) },
@@ -47,7 +58,7 @@ fun ExploreBooksScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Top,
         ){
             Text(
                 modifier = Modifier.padding(start = 35.dp, end = 40.dp, top = 36.dp, bottom = 22.dp),
@@ -58,7 +69,13 @@ fun ExploreBooksScreen() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1C1939)
             )
-            SearchBar(Modifier.padding(start = 30.dp, end = 30.dp, top = 22.dp, bottom = 16.dp))
+            SearchBar(
+                inputBookValue = exploreBooksViewModel.bookTitle,
+                onEvent = {
+                    exploreBooksViewModel.processEvent(it)
+                },
+                Modifier.padding(start = 30.dp, end = 30.dp, top = 22.dp, bottom = 16.dp)
+            )
             Text(
                 modifier = Modifier.padding(start = 35.dp, end = 45.dp, top = 22.dp, bottom = 16.dp),
                 textAlign = TextAlign.Start,
@@ -68,11 +85,17 @@ fun ExploreBooksScreen() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1C1939)
             )
-            LazyColumn(
-
-            ){
-                items(5) { index ->
-                    BookCard(Modifier.padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp))
+            LazyColumn{
+                items(
+                    items = exploreBooksState.bookList,
+                ) { book ->
+                    BookCard(
+                        book,
+                        onEvent = {
+                            exploreBooksViewModel.processEvent(it)
+                        },
+                        Modifier.padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp)
+                    )
                 }
             }
         }
@@ -80,10 +103,14 @@ fun ExploreBooksScreen() {
 }
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+fun SearchBar(
+    inputBookValue: String,
+    onEvent: (ExploreBooksViewModel.ViewEvents) -> Unit,
+    modifier: Modifier = Modifier
+) {
     TextField(
-        value = "",
-        onValueChange = {},
+        value = inputBookValue,
+        singleLine = true,
         modifier = modifier
             .fillMaxWidth()
             .shadow(
@@ -111,14 +138,24 @@ fun SearchBar(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Normal
             )
         },
-        shape = RoundedCornerShape(35.dp)
+        shape = RoundedCornerShape(35.dp),
+        onValueChange = {
+                        onEvent(ExploreBooksViewModel.ViewEvents.SearchBooks(it))
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {}
+        )
     )
 }
 
 @Composable
 fun BookCard(
-    modifier: Modifier = Modifier,
-    @DrawableRes bookCover: Int = R.drawable.book_cover
+    book: BookDTO,
+    onEvent: (ExploreBooksViewModel.ViewEvents) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -137,13 +174,15 @@ fun BookCard(
             verticalAlignment = Alignment.CenterVertically
         ){
             Image(
-                painter = painterResource(id = bookCover),
+                painter = painterResource(id = book.image),
                 contentDescription = null,
                 modifier = Modifier
                     .size(width = 128.dp, height = 180.dp)
                     .clip(RoundedCornerShape(16.dp))
             )
             InternalBookCard(
+                bookInfo =  book,
+                onEvent = onEvent,
                 modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 14.dp)
             )
         }
@@ -151,12 +190,16 @@ fun BookCard(
 }
 
 @Composable
-fun InternalBookCard(modifier: Modifier = Modifier) {
+fun InternalBookCard(
+    bookInfo: BookDTO,
+    onEvent: (ExploreBooksViewModel.ViewEvents) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
     ){
         Text(
-            text = "by Joshua Becker",
+            text = "by ${bookInfo.author[0]}",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
@@ -165,7 +208,7 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
             color = Color.Gray
         )
         Text(
-            text = "The More of Less",
+            text = bookInfo.title,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -174,6 +217,7 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
             color = Color(0xFF373737)
         )
         Rate(
+            rate = bookInfo.averageRating,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(bottom = 6.dp)
@@ -185,7 +229,7 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
                 .padding(bottom = 6.dp)
         ) {
             Text(
-                text = "Minimalist",
+                text = bookInfo.categories[0],
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -193,18 +237,32 @@ fun InternalBookCard(modifier: Modifier = Modifier) {
                     .padding(horizontal = 10.dp, vertical = 4.dp),
                 color = Color(0xFF4EC2FB)
             )
-            Image(
-                modifier = Modifier.weight(1f),
-                alignment = Alignment.CenterEnd,
-                painter = painterResource(id = R.drawable.favorite),
-                contentDescription = null,
-            )
+            Surface(
+                Modifier
+                    .weight(1f)
+            ){
+                Image(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = {
+                                onEvent(ExploreBooksViewModel.ViewEvents.OnFavoriteClick(bookInfo))
+                            }
+                        ),
+                    alignment = Alignment.CenterEnd,
+                    painter = painterResource(id = if (bookInfo.isFavorite) R.drawable.favorite else R.drawable.unfavorite),
+                    contentDescription = null,
+                )
+            }
+
         }
     }
 }
 
 @Composable
-fun Rate(modifier: Modifier = Modifier) {
+fun Rate(
+    rate: Double,
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -215,7 +273,7 @@ fun Rate(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(end = 6.dp)
         )
         Text(
-            text = "4.5",
+            text = rate.toString(),
             fontSize = 16.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier,
@@ -228,7 +286,7 @@ fun Rate(modifier: Modifier = Modifier) {
 @Composable
 fun RatePreview() {
     BookReviewsTheme {
-        Rate()
+        Rate(4.5)
     }
 }
 
@@ -236,7 +294,11 @@ fun RatePreview() {
 @Composable
 fun InternalBookCardPreview() {
     BookReviewsTheme {
-        InternalBookCard()
+        InternalBookCard(
+            BookDTO(1, "Book 1", listOf("Author 1"), 4.5, "Description 1", listOf("Genre 1"), R.drawable.book_cover, true),
+            onEvent = {},
+            Modifier.padding(start = 16.dp, top = 12.dp, end = 14.dp)
+        )
     }
 }
 
@@ -244,7 +306,11 @@ fun InternalBookCardPreview() {
 @Composable
 fun BookCardPreview() {
     BookReviewsTheme {
-        BookCard(Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
+        BookCard(
+            BookDTO(1, "Book 1", listOf("Author 1"), 4.5, "Description 1", listOf("Genre 1"), R.drawable.book_cover, true),
+            onEvent = {},
+            Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp)
+        )
     }
 }
 
@@ -252,7 +318,10 @@ fun BookCardPreview() {
 @Composable
 fun SearchBarPreview() {
     BookReviewsTheme {
-        SearchBar(Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
+        SearchBar(
+            inputBookValue = "",
+            onEvent = {},
+            Modifier.padding(start = 30.dp, end = 30.dp, top = 16.dp, bottom = 16.dp))
     }
 }
 

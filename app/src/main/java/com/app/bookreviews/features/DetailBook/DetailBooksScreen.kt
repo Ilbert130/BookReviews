@@ -1,6 +1,5 @@
-package com.app.bookreviews.ui
+package com.app.bookreviews.features.DetailBook
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,8 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.bookreviews.R
+import com.app.bookreviews.ui.BookBottomNavigation
+import com.app.bookreviews.features.ExploreBook.Rate
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun DetailBooksScreen() {
     Scaffold(
@@ -44,21 +44,23 @@ fun DetailBooksScreen() {
             BookBottomNavigation(modifier = Modifier.padding(top = 15.dp, bottom = 15.dp))
         }
     ){ innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             verticalArrangement = Arrangement.Top,
         ) {
-            BookCoverCard(Modifier.padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp))
-            AuthorRateCard(Modifier
-                .padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 10.dp)
-                .fillMaxWidth()
-            )
-            BookCardInformation(Modifier
-                .padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp)
-                .fillMaxWidth()
-            )
+            items(1) {
+                BookCoverCard(Modifier.padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp))
+                AuthorRateCard(Modifier
+                    .padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 10.dp)
+                    .fillMaxWidth()
+                )
+                BookCardInformation(Modifier
+                    .padding(start = 30.dp, end = 30.dp, top = 8.dp, bottom = 14.dp)
+                    .fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -79,6 +81,7 @@ fun AuthorRateCard(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Start
         )
         Rate(
+            4.5,
             modifier = Modifier
         )
     }
@@ -119,7 +122,7 @@ fun BookCoverCard(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(1) {
+        item {
             Surface(
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 20.dp)
@@ -130,7 +133,7 @@ fun BookCoverCard(modifier: Modifier = Modifier) {
                         ambientColor = Color.Black,
                         spotColor = Color.Transparent
                     )
-            ){
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.book_cover),
                     contentDescription = null,
@@ -140,6 +143,8 @@ fun BookCoverCard(modifier: Modifier = Modifier) {
                         .clip(RoundedCornerShape(16.dp))
                 )
             }
+        }
+        item {
             Text(
                 text = "Minimalist",
                 fontSize = 14.sp,
