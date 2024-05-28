@@ -6,12 +6,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.app.bookreviews.DTOs.BookDTO
 import com.app.bookreviews.data.books
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class ExploreBooksViewModel: ViewModel() {
+@HiltViewModel
+class ExploreBooksViewModel @Inject constructor(
+    // Place where you inject dependencies
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ExploreBooksState())
     val uiState: StateFlow<ExploreBooksState> = _uiState.asStateFlow()
 
