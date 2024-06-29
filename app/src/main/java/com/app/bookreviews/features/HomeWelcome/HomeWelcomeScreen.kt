@@ -1,4 +1,4 @@
-package com.app.bookreviews.ui
+package com.app.bookreviews.features.HomeWelcome
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.bookreviews.R
+import com.app.bookreviews.ui.BookBottomNavigation
 import com.app.bookreviews.ui.theme.BookReviewsTheme
 
 
